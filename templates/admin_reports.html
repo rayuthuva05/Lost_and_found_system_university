@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}View All Reports{% endblock %}
+
+{% block content %}
+<h2 style="margin-bottom: 30px; color: rgb(107, 0, 62);">📋 All Lost & Found Reports</h2>
+
+<div class="card">
+    <div class="card-header" style="color: red;">🔍 Lost Items</div>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Photo</th>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Location</th>
+                <th>Date Lost</th>
+                <th>Time Lost</th>
+                <th>Reported By</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in lost_items %}
+            <tr>
+                <td>{{ item['id'] }}</td>
+                <td>
+                    {% if item['photo_path'] %}
+                        <img src="{{ url_for('static', filename=item['photo_path']) }}" 
+                             alt="Item photo" 
+                             style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px; cursor: pointer;"
+                             onclick="showImageModal('{{ url_for('static', filename=item['photo_path']) }}')">
+                    {% else %}
+                        <span style="color: #999; font-size: 12px;">No photo</span>
+                    {% endif %}
+                </td>
+                <td><strong>{{ item['item_name'] }}</strong></td>
+                <td>{{ item['category'] }}</td>
+                <td>{{ item['description'][:50] }}...</td>
+                <td>{{ item['location_lost'] }}</td>
+                <td>{{ item['date_lost'] }}</td>
+                <td>{{ item['time_lost'] or 'N/A' }}</td>
+                <td>{{ item['reporter_name'] }}<br><small>({{ item['username'] }})</small></td>
+                <td>
+                    {% if item['status'] == 'pending' %}
+                        <span class="badge badge-pending">Pending</span>
+                    {% elif item['status'] == 'resolved' %}
+                        <span class="badge badge-resolved">Resolved</span>
+                    {% else %}
+                        <span class="badge badge-claimed">{{ item['status'] }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div style="display: flex; gap: 5px; flex-direction: column;">
+                        {% if item['status'] == 'pending' %}
+                            <button onclick="matchItem({{ item['id'] }}, 'lost')" 
+                                    class="btn btn-success" 
+                                    style="padding: 5px 10px; font-size: 14px;">
+                                Match & Handover
+                            </button>
+                        {% endif %}
+                        <a href="{{ url_for('delete_lost_item', item_id=item['id']) }}" 
+                           class="btn btn-danger" 
+                           onclick="return confirm('Are you sure you want to delete this item?')"
+                           style="padding: 5px 10px; font-size: 14px;">
+                            Remove
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    {% if not lost_items %}
+    <p style="text-align: center; padding: 30px; color: #666;">No lost items reported yet.</p>
+    {% endif %}
+</div>
+
+<div class="card" style="margin-top: 30px;">
+    <div class="card-header" style="color: green;">✅ Found Items</div>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Photo</th>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Location</th>
+                <th>Date Found</th>
+                <th>Time Found</th>
+                <th>Reported By</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in found_items %}
+            <tr>
+                <td>{{ item['id'] }}</td>
+                <td>
+                    {% if item['photo_path'] %}
+                        <img src="{{ url_for('static', filename=item['photo_path']) }}" 
+                             alt="Item photo" 
+                             style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px; cursor: pointer;"
+                             onclick="showImageModal('{{ url_for('static', filename=item['photo_path']) }}')">
+                    {% else %}
+                        <span style="color: #999; font-size: 12px;">No photo</span>
+                    {% endif %}
+                </td>
+                <td><strong>{{ item['item_name'] }}</strong></td>
+                <td>{{ item['category'] }}</td>
+                <td>{{ item['description'][:50] }}...</td>
+                <td>{{ item['location_found'] }}</td>
+                <td>{{ item['date_found'] }}</td>
+                <td>{{ item['time_found'] or 'N/A' }}</td>
+                <td>{{ item['finder_name'] }}<br><small>({{ item['username'] }})</small></td>
+                <td>
+                    {% if item['status'] == 'pending' %}
+                        <span class="badge badge-pending">Pending</span>
+                    {% elif item['status'] == 'resolved' %}
+                        <span class="badge badge-resolved">Resolved</span>
+                    {% else %}
+                        <span class="badge badge-claimed">{{ item['status'] }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div style="display: flex; gap: 5px; flex-direction: column;">
+                        {% if item['status'] == 'pending' %}
+                            <button onclick="matchItem({{ item['id'] }}, 'found')" 
+                                    class="btn btn-success" 
+                                    style="padding: 5px 10px; font-size: 14px;">
+                                Match & Handover
+                            </button>
+                        {% endif %}
+                        <a href="{{ url_for('delete_found_item', item_id=item['id']) }}" 
+                           class="btn btn-danger" 
+                           onclick="return confirm('Are you sure you want to delete this item?')"
+                           style="padding: 5px 10px; font-size: 14px;">
+                            Remove
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    {% if not found_items %}
+    <p style="text-align: center; padding: 30px; color: #666;">No found items reported yet.</p>
+    {% endif %}
+</div>
+
+<!-- Image Modal -->
+<div id="imageModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9);" onclick="closeImageModal()">
+    <span style="position: absolute; top: 20px; right: 40px; color: white; font-size: 40px; font-weight: bold; cursor: pointer;">&times;</span>
+    <img id="modalImage" style="margin: auto; display: block; max-width: 90%; max-height: 90%; margin-top: 50px;">
+</div>
+
+<script>
+    function matchItem(itemId, type) {
+        let lostId, foundId;
+        
+        if (type === 'lost') {
+            lostId = itemId;
+            foundId = prompt('Enter the matching Found Item ID:');
+        } else {
+            foundId = itemId;
+            lostId = prompt('Enter the matching Lost Item ID:');
+        }
+        
+        if (lostId && foundId) {
+            if (confirm('Confirm handover of this matched item?')) {
+                window.location.href = `/admin/handover/${lostId}/${foundId}`;
+            }
+        }
+    }
+    
+    function showImageModal(imageSrc) {
+        document.getElementById('imageModal').style.display = 'block';
+        document.getElementById('modalImage').src = imageSrc;
+    }
+    
+    function closeImageModal() {
+        document.getElementById('imageModal').style.display = 'none';
+    }
+</script>
+{% endblock %}

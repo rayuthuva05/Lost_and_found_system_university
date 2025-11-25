@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Post Found Item{% endblock %}
+
+{% block content %}
+<h2 style="margin-bottom: 30px; color: #333;">✅ Post Found Item</h2>
+
+<div class="card" style="max-width: 700px;">
+    <form method="POST" action="{{ url_for('staff_post_found') }}" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="item_name">Item Name *</label>
+            <input type="text" id="item_name" name="item_name" class="form-control" required 
+                   placeholder="e.g., Black Wallet, iPhone 13, Student ID Card">
+        </div>
+
+        <div class="form-group">
+            <label for="category">Category *</label>
+            <select id="category" name="category" class="form-control" required>
+                <option value="">-- Select Category --</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Documents">Documents</option>
+                <option value="Accessories">Accessories</option>
+                <option value="Books">Books</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Keys">Keys</option>
+                <option value="Others">Others</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description *</label>
+            <textarea id="description" name="description" class="form-control" rows="4" required 
+                      placeholder="Provide detailed description of the item..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="location_found">Location Found *</label>
+            <input type="text" id="location_found" name="location_found" class="form-control" required 
+                   placeholder="e.g., Cafeteria, Parking Lot A">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+                <label for="date_found">Date Found *</label>
+                <input type="date" id="date_found" name="date_found" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="time_found">Time Found *</label>
+                <input type="time" id="time_found" name="time_found" class="form-control" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="photo">Upload Photo</label>
+            <input type="file" id="photo" name="photo" class="form-control" accept="image/*">
+            <small style="color: #666; font-size: 14px;">Supported formats: JPG, PNG, GIF (Max 16MB)</small>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 30px;">
+            <button type="submit" class="btn btn-primary">Post Found Item</button>
+            <a href="{{ url_for('staff_dashboard') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Post Lost Item{% endblock %}
+
+{% block content %}
+<h2 style="margin-bottom: 30px; color: #333;">🔍 Post Lost Item</h2>
+
+<div class="card" style="max-width: 700px;">
+    <form method="POST" action="{{ url_for('admin_post_lost') }}" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="item_name">Item Name *</label>
+            <input type="text" id="item_name" name="item_name" class="form-control" required 
+                   placeholder="e.g., Black Wallet, iPhone 13, Student ID Card">
+        </div>
+
+        <div class="form-group">
+            <label for="category">Category *</label>
+            <select id="category" name="category" class="form-control" required>
+                <option value="">-- Select Category --</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Documents">Documents</option>
+                <option value="Accessories">Accessories</option>
+                <option value="Books">Books</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Keys">Keys</option>
+                <option value="Others">Others</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description *</label>
+            <textarea id="description" name="description" class="form-control" rows="4" required 
+                      placeholder="Provide detailed description of the item..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="location_lost">Location Lost *</label>
+            <input type="text" id="location_lost" name="location_lost" class="form-control" required 
+                   placeholder="e.g., Library 2nd Floor, Engineering Building">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+                <label for="date_lost">Date Lost *</label>
+                <input type="date" id="date_lost" name="date_lost" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="time_lost">Time Lost *</label>
+                <input type="time" id="time_lost" name="time_lost" class="form-control" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="photo">Upload Photo</label>
+            <input type="file" id="photo" name="photo" class="form-control" accept="image/*">
+            <small style="color: #666; font-size: 14px;">Supported formats: JPG, PNG, GIF (Max 16MB)</small>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 30px;">
+            <button type="submit" class="btn btn-primary">Post Lost Item</button>
+            <a href="{{ url_for('admin_reports') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
